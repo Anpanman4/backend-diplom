@@ -14,6 +14,10 @@ class ProductController {
   getProducts = async (req: Request, res: Response, next: NextFunction) => {
     return res.send(await Product.find({}));
   };
+  getProductById = async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    return res.send(await Product.findById(id));
+  };
 
   createProduct = (req: Request, res: Response, next: NextFunction) => {
     const { title, about } = req.body;
@@ -35,7 +39,6 @@ class ProductController {
     }
   };
 
-  // to do
   updateProductById = async (req: Request, res: Response, next: NextFunction) => {
     const { title, about, isVisible } = req.body;
     const { id } = req.params;
@@ -57,6 +60,14 @@ class ProductController {
         res.send(newProduct);
       });
     }
+  };
+
+  changeProductVisibility = (req: Request, res: Response, next: NextFunction) => {
+    const { isVisible } = req.body;
+    const { id } = req.params;
+    Product.findByIdAndUpdate(id, { isVisible: isVisible }, { new: true }).then(newProduct => {
+      res.send(newProduct);
+    });
   };
 
   deleteProductById = async (req: Request, res: Response, next: NextFunction) => {

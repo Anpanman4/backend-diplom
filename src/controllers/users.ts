@@ -69,13 +69,21 @@ class UserController {
       .catch(next);
   };
 
-  getUsers = async (req: RequestWithUser, res: Response) => {
-    return res.send(await User.find({}));
+  getUsers = (req: RequestWithUser, res: Response, next: NextFunction) => {
+    User.find({})
+      .then(users => {
+        if (!users) return next(new SyntaxError("Пользователей не найдено"));
+      })
+      .catch(next);
   };
 
-  getUserById = async (req: RequestWithUser, res: Response) => {
+  getUserById = (req: RequestWithUser, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    return res.send(await User.findById(id));
+    User.findById(id)
+      .then(user => {
+        if (!user) return next(new SyntaxError("Пользователь с таким id не найден"));
+      })
+      .catch(next);
   };
 
   getMe = async (req: RequestWithUser, res: Response) => {
