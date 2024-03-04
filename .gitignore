@@ -27,5 +27,9 @@ pnpm-debug.log*
 
 *.docx
 
+uploads/*.png
+uploads/*.jpg
+uploads/*.jpeg
+
 # build directories
 dist/

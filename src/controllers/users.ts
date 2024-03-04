@@ -79,12 +79,12 @@ class UserController {
   };
 
   getMe = async (req: RequestWithUser, res: Response) => {
-    const id = req.user._id;
+    const id = req?.user?._id;
     return res.send(await User.findById(id));
   };
 
   updateUserInfo = (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const id = req.user._id;
+    const id = req?.user?._id;
     const { email, firstName } = req.body;
     User.findByIdAndUpdate(
       id,

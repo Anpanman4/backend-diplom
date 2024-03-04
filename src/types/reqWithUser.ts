@@ -1,10 +1,10 @@
 import { Request } from "express";
 import { JwtPayload } from "jsonwebtoken";
 
-export interface RequestWithUser extends Request {
+export type RequestWithUser = Request & {
   user?: any;
-}
+};
 
-interface IUser extends JwtPayload {
+type IUser = JwtPayload & {
   _id: string;
-}
+};
