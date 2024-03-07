@@ -16,7 +16,13 @@ class ProductController {
   };
   getProductById = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
-    return res.send(await Product.findById(id));
+    try {
+      const product = await Product.findById(id);
+      if (!product) return next(new SyntaxError("Продукт с таким ID не найден"));
+      return res.send(product);
+    } catch (err) {
+      next(err);
+    }
   };
 
   createProduct = (req: Request, res: Response, next: NextFunction) => {

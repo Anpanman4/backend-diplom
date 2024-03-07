@@ -73,6 +73,7 @@ class UserController {
     User.find({})
       .then(users => {
         if (!users) return next(new SyntaxError("Пользователей не найдено"));
+        return res.send(users);
       })
       .catch(next);
   };
@@ -82,8 +83,11 @@ class UserController {
     User.findById(id)
       .then(user => {
         if (!user) return next(new SyntaxError("Пользователь с таким id не найден"));
+        res.send(user);
       })
-      .catch(next);
+      .catch(err => {
+        next(err);
+      });
   };
 
   getMe = async (req: RequestWithUser, res: Response) => {
@@ -108,8 +112,10 @@ class UserController {
         if (user) res.send(user);
       })
       .catch(err => {
+        console.log(err.codeName);
         if (err.name === "ValidationError")
           return next(new SyntaxError("Переданы некорректные данные для обновления информации."));
+        if (err.codeName === "DuplicateKey") return next(new AlreadyCreatedError("Такой email уже занят"));
         return next(err);
       });
   };
