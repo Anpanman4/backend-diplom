@@ -14,7 +14,7 @@ router.post("/login", userController.login);
 router.use(authMiddleware);
 
 router.use("/users", userRouter);
-router.use("/product", productRouter);
-router.use("/order", orderRouter);
+router.use("/products", productRouter);
+router.use("/orders", orderRouter);
 
 export default router;

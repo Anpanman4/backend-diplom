@@ -8,9 +8,11 @@ const orderSchema = new mongoose.Schema({
   },
   productIds: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "product",
-      default: [],
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "product",
+      },
+      count: { type: Number },
     },
   ],
   deliverPlace: {
