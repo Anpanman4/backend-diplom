@@ -54,12 +54,10 @@ class UserController {
         }
         compare(password, user.password)
           .then((isMatched: boolean) => {
-            if (!isMatched) {
-              next(new AuthError("Введен неправильный пароль"));
-            }
+            if (!isMatched) return next(new AuthError("Введен неправильный пароль"));
 
             const jwt = jsonwebtoken.sign({ _id: user._id }, JWT_SECRET_KEY, {
-              expiresIn: "12h", // 2d
+              expiresIn: "12h",
             });
 
             res.send({ token: jwt });
@@ -112,7 +110,6 @@ class UserController {
         if (user) res.send(user);
       })
       .catch(err => {
-        console.log(err.codeName);
         if (err.name === "ValidationError")
           return next(new SyntaxError("Переданы некорректные данные для обновления информации."));
         if (err.codeName === "DuplicateKey") return next(new AlreadyCreatedError("Такой email уже занят"));

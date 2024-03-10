@@ -61,7 +61,7 @@ class ProductController {
       const productBefore = await Product.findById(id);
       Product.findByIdAndUpdate(id, { image: `${destination}${filename}` }, { new: true }).then(newProduct => {
         fs.unlink(`${productBefore?.image}`, err => {
-          if (err) return console.log(err);
+          if (err) return;
         });
         res.send(newProduct);
       });
@@ -81,7 +81,7 @@ class ProductController {
 
     const answer = await Product.findByIdAndDelete({ _id: id });
     fs.unlink(`${answer?.image}`, err => {
-      if (err) console.log(err);
+      if (err) return;
     });
     return res.send({ answer: "Успешно удален" });
   };

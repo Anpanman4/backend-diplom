@@ -53,7 +53,6 @@ class OrderController {
       const order = await Order.create({ userId, productIds, deliverPlace });
       return res.send(order);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   };
@@ -65,7 +64,6 @@ class OrderController {
       const order = await Order.findByIdAndUpdate(id, { isClosed }, { new: true });
       return res.send(order);
     } catch (err) {
-      console.log(err);
       next(err);
     }
   };

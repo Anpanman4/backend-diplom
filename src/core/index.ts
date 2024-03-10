@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import { errors } from "celebrate";
 
 import routes from "../routes/index";
 import globalError from "../middlewares/globalError";
@@ -31,6 +32,7 @@ class App {
 
     app.use("/api", routes);
 
+    app.use(errors());
     app.use(globalError);
 
     mongoose
