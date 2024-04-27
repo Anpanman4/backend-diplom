@@ -30,6 +30,13 @@ export const validatorUpdateUserInfo = celebrate({
   }),
 });
 
+export const validatorUpdateUserStatus = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    status: Joi.boolean().required(),
+  }),
+});
+
 // Product
 export const validatorGetProductById = celebrate({
   params: Joi.object().keys({

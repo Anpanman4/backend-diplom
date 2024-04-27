@@ -21,22 +21,30 @@ class UserController {
     const { email, password, firstName } = req.body;
 
     hash(password, 10)
-      .then(hashedPassword => {
+      .then((hashedPassword) => {
         return { email, password: hashedPassword, firstName };
       })
       .then((body: userBody) => {
         User.create(body)
-          .then(user => {
+          .then((user) => {
             if (user) {
               res.status(201).send({ email, firstName });
             }
           })
-          .catch(err => {
+          .catch((err) => {
             if (err.code === 11000) {
-              return next(new AlreadyCreatedError("Пользователь с таким Email уже зарегистрирован"));
+              return next(
+                new AlreadyCreatedError(
+                  "Пользователь с таким Email уже зарегистрирован"
+                )
+              );
             }
             if (err.name === "ValidationError") {
-              return next(new SyntaxError("Переданы некорректные данные при создании пользователя."));
+              return next(
+                new SyntaxError(
+                  "Переданы некорректные данные при создании пользователя."
+                )
+              );
             }
             return next(err);
           });
@@ -48,13 +56,14 @@ class UserController {
     const { email, password } = req.body;
     User.findOne({ email })
       .select("+password")
-      .then(user => {
+      .then((user) => {
         if (!user) {
           return next(new AuthError("Пользователь не найден"));
         }
         compare(password, user.password)
           .then((isMatched: boolean) => {
-            if (!isMatched) return next(new AuthError("Введен неправильный пароль"));
+            if (!isMatched)
+              return next(new AuthError("Введен неправильный пароль"));
 
             const jwt = jsonwebtoken.sign({ _id: user._id }, JWT_SECRET_KEY, {
               expiresIn: "12h",
@@ -69,7 +78,7 @@ class UserController {
 
   getUsers = (req: RequestWithUser, res: Response, next: NextFunction) => {
     User.find({})
-      .then(users => {
+      .then((users) => {
         if (!users) return next(new SyntaxError("Пользователей не найдено"));
         return res.send(users);
       })
@@ -79,11 +88,12 @@ class UserController {
   getUserById = (req: RequestWithUser, res: Response, next: NextFunction) => {
     const { id } = req.params;
     User.findById(id)
-      .then(user => {
-        if (!user) return next(new SyntaxError("Пользователь с таким id не найден"));
+      .then((user) => {
+        if (!user)
+          return next(new SyntaxError("Пользователь с таким id не найден"));
         res.send(user);
       })
-      .catch(err => {
+      .catch((err) => {
         next(err);
       });
   };
@@ -93,7 +103,11 @@ class UserController {
     return res.send(await User.findById(id));
   };
 
-  updateUserInfo = (req: RequestWithUser, res: Response, next: NextFunction) => {
+  updateUserInfo = (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
     const id = req?.user?._id;
     const { email, firstName } = req.body;
     User.findByIdAndUpdate(
@@ -106,15 +120,39 @@ class UserController {
         new: true,
       }
     )
-      .then(user => {
+      .then((user) => {
         if (user) res.send(user);
       })
-      .catch(err => {
+      .catch((err) => {
         if (err.name === "ValidationError")
-          return next(new SyntaxError("Переданы некорректные данные для обновления информации."));
-        if (err.codeName === "DuplicateKey") return next(new AlreadyCreatedError("Такой email уже занят"));
+          return next(
+            new SyntaxError(
+              "Переданы некорректные данные для обновления информации."
+            )
+          );
+        if (err.codeName === "DuplicateKey")
+          return next(new AlreadyCreatedError("Такой email уже занят"));
         return next(err);
       });
+  };
+
+  updateUserStatus = (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { email, status } = req.body;
+    if (status)
+      return User.findOneAndUpdate(
+        { email },
+        { $addToSet: { roles: "Admin" } },
+        { new: true }
+      ).then((user) => res.send(user));
+    User.findOneAndUpdate(
+      { email },
+      { $pull: { roles: "Admin" } },
+      { new: true }
+    ).then((user) => res.send(user));
   };
 }
 
