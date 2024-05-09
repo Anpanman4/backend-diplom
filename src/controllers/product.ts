@@ -14,11 +14,13 @@ class ProductController {
   getProducts = async (req: Request, res: Response, next: NextFunction) => {
     return res.send(await Product.find({}));
   };
+
   getProductById = async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     try {
       const product = await Product.findById(id);
-      if (!product) return next(new SyntaxError("Продукт с таким ID не найден"));
+      if (!product)
+        return next(new SyntaxError("Продукт с таким ID не найден"));
       return res.send(product);
     } catch (err) {
       next(err);
@@ -26,18 +28,32 @@ class ProductController {
   };
 
   createProduct = (req: Request, res: Response, next: NextFunction) => {
-    const { title, about } = req.body;
+    const { title, about, price, smell, hairType, fixationDegree, volume } =
+      req.body;
 
     if (req.file) {
       const { destination, filename } = req.file;
 
-      Product.create({ title, about, image: `${destination}${filename}` })
-        .then(product => {
+      Product.create({
+        title,
+        about,
+        price,
+        smell: smell.split(" "),
+        hairType: hairType.split(" "),
+        fixationDegree,
+        volume,
+        image: `${destination}${filename}`,
+      })
+        .then((product) => {
           res.status(201).send(product);
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.name === "ValidationError")
-            next(new SyntaxError("Переданы некорректные данные при создании продукта."));
+            next(
+              new SyntaxError(
+                "Переданы некорректные данные при создании продукта."
+              )
+            );
           next(err);
         });
     } else {
@@ -45,22 +61,56 @@ class ProductController {
     }
   };
 
-  updateProductById = async (req: Request, res: Response, next: NextFunction) => {
-    const { title, about, isVisible } = req.body;
+  updateProductById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const {
+      title,
+      about,
+      price,
+      smell,
+      hairType,
+      fixationDegree,
+      volume,
+      isVisible,
+    } = req.body;
     const { id } = req.params;
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, { title, about, isVisible }, { new: true });
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        title,
+        about,
+        price,
+        smell: smell.split(" "),
+        hairType: hairType.split(" "),
+        fixationDegree,
+        volume,
+        isVisible,
+      },
+      { new: true }
+    );
     return res.send(updatedProduct);
   };
 
-  updateProductImageById = async (req: Request, res: Response, next: NextFunction) => {
+  updateProductImageById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const { id } = req.params;
 
     if (req.file) {
       const { destination, filename } = req.file;
       const productBefore = await Product.findById(id);
-      Product.findByIdAndUpdate(id, { image: `${destination}${filename}` }, { new: true }).then(newProduct => {
-        fs.unlink(`${productBefore?.image}`, err => {
+      Product.findByIdAndUpdate(
+        id,
+        { image: `${destination}${filename}` },
+        { new: true }
+      ).then((newProduct) => {
+        fs.unlink(`${productBefore?.image}`, (err) => {
           if (err) return;
         });
         res.send(newProduct);
@@ -68,19 +118,29 @@ class ProductController {
     }
   };
 
-  changeProductVisibility = (req: Request, res: Response, next: NextFunction) => {
+  changeProductVisibility = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const { isVisible } = req.body;
     const { id } = req.params;
-    Product.findByIdAndUpdate(id, { isVisible: isVisible }, { new: true }).then(newProduct => {
-      res.send(newProduct);
-    });
+    Product.findByIdAndUpdate(id, { isVisible: isVisible }, { new: true }).then(
+      (newProduct) => {
+        res.send(newProduct);
+      }
+    );
   };
 
-  deleteProductById = async (req: Request, res: Response, next: NextFunction) => {
+  deleteProductById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     const { id } = req.params;
 
     const answer = await Product.findByIdAndDelete({ _id: id });
-    fs.unlink(`${answer?.image}`, err => {
+    fs.unlink(`${answer?.image}`, (err) => {
       if (err) return;
     });
     return res.send({ answer: "Успешно удален" });

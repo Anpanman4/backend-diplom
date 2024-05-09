@@ -7,8 +7,11 @@ import {
   validatorGetUserById,
   validatorUpdateUserStatus,
 } from "../utils/validator";
+import { authMiddleware } from "../middlewares/auth";
 
 const userRouter: express.Router = express.Router();
+
+userRouter.use(authMiddleware);
 
 userRouter.get("", userController.getUsers);
 userRouter.get("/me", userController.getMe);

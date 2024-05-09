@@ -48,6 +48,11 @@ export const validatorCreateProduct = celebrate({
   body: Joi.object().keys({
     title: Joi.string().required().min(2),
     about: Joi.string().required().min(2),
+    price: Joi.string().required(),
+    smell: Joi.required(),
+    hairType: Joi.required(),
+    fixationDegree: Joi.required(),
+    volume: Joi.required(),
   }),
 });
 
@@ -67,6 +72,11 @@ export const validatorUpdateProductContentById = celebrate({
   body: Joi.object().keys({
     title: Joi.string().required().min(2),
     about: Joi.string().required().min(2),
+    price: Joi.string().required(),
+    smell: Joi.required(),
+    hairType: Joi.required(),
+    fixationDegree: Joi.required(),
+    volume: Joi.required(),
     isVisible: Joi.boolean().required(),
   }),
 });
