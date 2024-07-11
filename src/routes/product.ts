@@ -24,9 +24,8 @@ productRouter.get(
 productRouter.use(authMiddleware);
 
 productRouter.post(
-  "",
+  "/",
   uploadMiddleware.single("image"),
-  validatorCreateProduct,
   productController.createProduct
 );
 productRouter.patch(

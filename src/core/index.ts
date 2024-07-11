@@ -6,6 +6,7 @@ import { errors } from "celebrate";
 import routes from "../routes/index";
 import globalError from "../middlewares/globalError";
 import { corsMiddleWare } from "../middlewares/cors";
+import bodyParser from "body-parser";
 dotenv.config();
 
 class App {
@@ -25,8 +26,7 @@ class App {
     const app = express();
 
     app.use(corsMiddleWare);
-
-    app.use(express.json());
+    app.use(express.json({ limit: "2MB" }));
     app.use(express.urlencoded({ extended: true }));
     app.use("/uploads", express.static("uploads"));
 
@@ -37,7 +37,11 @@ class App {
 
     mongoose
       .connect(
-        `mongodb://127.0.0.1:27017/${process.env.NODE_ENV === "production" ? process.env.DATABASE_NAME : "diplom"}`
+        `mongodb://127.0.0.1:27017/${
+          process.env.NODE_ENV === "production"
+            ? process.env.DATABASE_NAME
+            : "diplom"
+        }`
       )
       .then(() => console.log("DB working"));
 

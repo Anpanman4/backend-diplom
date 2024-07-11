@@ -30,7 +30,16 @@ class ProductController {
   createProduct = (req: Request, res: Response, next: NextFunction) => {
     const { title, about, price, smell, hairType, fixationDegree, volume } =
       req.body;
-
+    console.log({
+      title,
+      about,
+      price,
+      smell,
+      hairType,
+      fixationDegree,
+      volume,
+      file: req.file,
+    });
     if (req.file) {
       const { destination, filename } = req.file;
 
