@@ -142,12 +142,13 @@ class UserController {
     next: NextFunction
   ) => {
     const { email, status } = req.body;
-    if (status)
+    if (status) {
       return User.findOneAndUpdate(
         { email },
         { $addToSet: { roles: "Admin" } },
         { new: true }
       ).then((user) => res.send(user));
+    }
     User.findOneAndUpdate(
       { email },
       { $pull: { roles: "Admin" } },
