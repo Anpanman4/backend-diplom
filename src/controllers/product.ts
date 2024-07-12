@@ -5,8 +5,6 @@ import fs from "fs";
 import Product from "../models/product";
 
 import SyntaxError from "../errors/syntaxError";
-import AlreadyCreatedError from "../errors/alreadyCreatedError";
-import AuthError from "../errors/authError";
 
 dotenv.config();
 
